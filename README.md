@@ -33,6 +33,8 @@ npm start              # http://localhost:5509
 
 Data lives in `data/` (SQLite). Tests: `npm test`.
 
+**Deploy** on a systemd server: run `deploy/install.sh` as root. It sets up a service that pulls the latest `main` on every start and restarts itself when a new commit lands.
+
 ## License
 
 [MIT](LICENSE)

@@ -1,0 +1,25 @@
+# noted, run by systemd. Installed by deploy/install.sh.
+# Every (re)start pulls the latest main first (deploy/start.sh).
+[Unit]
+Description=noted notes app
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=noted
+Group=noted
+WorkingDirectory=/opt/noted
+EnvironmentFile=/etc/noted/noted.env
+ExecStart=/opt/noted/deploy/start.sh
+Restart=on-failure
+RestartSec=5
+# first start may compile better-sqlite3
+TimeoutStartSec=300
+
+NoNewPrivileges=true
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

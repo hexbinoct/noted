@@ -1,0 +1,7 @@
+[Unit]
+Description=Restart noted if GitHub has a newer version
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/noted/deploy/check-update.sh
