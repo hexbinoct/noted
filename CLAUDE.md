@@ -1,8 +1,8 @@
 # noted
 
 Personal notes web app with a Claude integration. Express + SQLite backend,
-vanilla-JS SPA frontend, **no build step**. See `README.md` for the
-deployment runbook (DigitalOcean droplet + Cloudflare Tunnel + systemd).
+vanilla-JS SPA frontend, **no build step**. Deployment (systemd service +
+update script, behind a Cloudflare Tunnel) lives in `deploy/`.
 
 ## Run
 

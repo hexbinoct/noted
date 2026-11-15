@@ -1,7 +1,8 @@
 {
   "name": "noted",
   "version": "1.0.0",
-  "description": "Personal notes app with Claude integration",
+  "description": "A notes app in which your agent can leave messages and you can leave messages for your agent to read during AI sessions.",
+  "license": "MIT",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
