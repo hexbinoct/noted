@@ -44,6 +44,14 @@ async function init() {
   refreshPushedUI();
 }
 
+// Keep the mobile browser chrome (status bar / address bar) in the theme's colour.
+function syncThemeColor() {
+  const bg = getComputedStyle(document.body).getPropertyValue('--bg').trim();
+  if (bg) document.querySelector('meta[name="theme-color"]').content = bg;
+}
+new MutationObserver(syncThemeColor).observe(document.body, { attributes: true, attributeFilter: ['data-theme'] });
+syncThemeColor();
+
 setUnauthorizedHandler(showAuth);
 initAuth(init);
 initNav();

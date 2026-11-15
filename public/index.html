@@ -40,7 +40,7 @@
 
     <section class="pane pane-list">
       <header class="pane-header">
-        <button class="icon-btn back-btn" id="back-to-library" aria-label="Back to library">‹</button>
+        <button class="icon-btn back-btn menu-btn" id="back-to-library" aria-label="Open library">☰</button>
         <h2 class="list-title" id="list-title">All notes</h2>
         <button class="icon-btn" id="new-note" title="New note" aria-label="New note">＋</button>
       </header>
@@ -48,7 +48,10 @@
         <input id="search" type="search" placeholder="Search, or #tag…" />
       </div>
       <div id="list-body" class="pane-scroll list-body"></div>
+      <button class="fab" id="fab-new-note" aria-label="New note">＋</button>
     </section>
+
+    <div class="scrim" id="scrim" aria-hidden="true"></div>
 
     <main class="pane pane-editor editor empty" id="editor">
       <header class="pane-header editor-header">
@@ -58,9 +61,14 @@
           <button class="format-toggle" id="format-toggle" title="Toggle format" aria-label="Toggle format">TXT</button>
           <button class="icon-btn" id="preview-toggle" title="Toggle preview" aria-label="Toggle preview">👁</button>
           <button class="icon-btn" id="convert-pushed" title="Convert to editable note" aria-label="Convert to note">📋</button>
-          <button class="icon-btn" id="archive-note" title="Archive" aria-label="Archive note">🗄</button>
-          <button class="icon-btn" id="download-note" title="Download" aria-label="Download note">⬇</button>
-          <button class="icon-btn" id="delete-note" title="Delete" aria-label="Delete note">🗑</button>
+          <span class="more-wrap">
+            <button class="icon-btn more-toggle" id="more-toggle" title="More" aria-label="More actions" aria-haspopup="true">⋯</button>
+            <span class="more-menu" id="more-menu">
+              <button class="icon-btn" id="archive-note" title="Archive" aria-label="Archive note"><span class="mi">🗄</span><span class="ml">Archive</span></button>
+              <button class="icon-btn" id="download-note" title="Download" aria-label="Download note"><span class="mi">⬇</span><span class="ml">Download</span></button>
+              <button class="icon-btn" id="delete-note" title="Delete" aria-label="Delete note"><span class="mi">🗑</span><span class="ml">Delete</span></button>
+            </span>
+          </span>
         </span>
       </header>
       <div id="readonly-banner" class="readonly-banner">Read-only — from Claude. Click 📋 to convert into an editable note.</div>

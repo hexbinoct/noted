@@ -37,7 +37,8 @@ function renderPreview() {
 function updateArchiveButton() {
   const btn = $('#archive-note');
   const archived = !!state.currentNote?.archived_at;
-  btn.textContent = archived ? '📤' : '🗄';
+  btn.querySelector('.mi').textContent = archived ? '📤' : '🗄';
+  btn.querySelector('.ml').textContent = archived ? 'Unarchive' : 'Archive';
   btn.title = archived ? 'Unarchive' : 'Archive';
 }
 
@@ -74,7 +75,7 @@ export async function openNote(id, { navigate = true } = {}) {
   clearTimeout(state.retryTimer);
   state.currentPushed = null;
   const editor = $('#editor');
-  editor.classList.remove('readonly', 'empty');
+  editor.classList.remove('readonly', 'empty', 'menu-open');
   const title = $('#note-title');
   const content = $('#note-content');
   title.disabled = false;
@@ -103,7 +104,7 @@ export async function openPushed(item, { navigate = true } = {}) {
   }
   const editor = $('#editor');
   editor.classList.add('readonly');
-  editor.classList.remove('empty');
+  editor.classList.remove('empty', 'menu-open');
   const title = $('#note-title');
   const content = $('#note-content');
   title.disabled = false;
@@ -128,7 +129,7 @@ export function clearEditor() {
   state.currentNote = null;
   state.currentPushed = null;
   const editor = $('#editor');
-  editor.classList.remove('readonly', 'preview', 'markdown');
+  editor.classList.remove('readonly', 'preview', 'markdown', 'menu-open');
   editor.classList.add('empty');
   $('#note-title').value = '';
   $('#note-content').value = '';
@@ -288,6 +289,13 @@ export function initEditor() {
   });
 
   $('#empty-new-note').addEventListener('click', createNote);
+
+  // Mobile "⋯" overflow menu (archive/download/delete). On desktop the menu
+  // is display:contents, so its buttons sit inline and the toggle is hidden.
+  $('#more-toggle').addEventListener('click', () => $('#editor').classList.toggle('menu-open'));
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#more-toggle')) $('#editor').classList.remove('menu-open');
+  });
 
   clearEditor();
 }

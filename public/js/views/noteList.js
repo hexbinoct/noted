@@ -52,6 +52,7 @@ function updateChrome() {
   const isNotes = NOTE_VIEWS.includes(v.type);
   $('#search-row').classList.toggle('hidden', !isNotes);
   $('#new-note').classList.toggle('hidden', !isNotes);
+  $('#fab-new-note').classList.toggle('hidden', !isNotes || v.type === 'archive');
 }
 
 let loadSeq = 0;
@@ -157,4 +158,5 @@ export function initList() {
   initPushedList(body);
   $('#search').addEventListener('input', debounce(loadList, 200));
   $('#new-note').addEventListener('click', createNote);
+  $('#fab-new-note').addEventListener('click', createNote);
 }

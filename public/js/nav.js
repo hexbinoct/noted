@@ -77,5 +77,6 @@ export function initNav() {
   });
   $('#back-to-library').addEventListener('click', () => setPane('library'));
   $('#back-to-list').addEventListener('click', () => setPane('list'));
+  $('#scrim').addEventListener('click', () => setPane('list'));
   initSwipe();
 }

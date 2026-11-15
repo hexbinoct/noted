@@ -56,10 +56,13 @@ body {
   color: var(--text);
   font-size: 15px;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
   overflow: hidden;
 }
 .hidden { display: none !important; }
 button { font: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+input:focus-visible, textarea:focus-visible { outline: none; }
 
 /* ---------------- Auth ---------------- */
 .auth-screen {
@@ -190,6 +193,11 @@ button { font: inherit; }
   width: 100%; padding: 0.45rem 0.65rem;
   border: 1px solid var(--border); border-radius: var(--radius);
   background: var(--bg-elev); color: var(--text); font: inherit; font-size: 0.88rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.search-row input:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 .list-body { padding: 0.35rem 0.6rem 1rem; }
 
@@ -205,6 +213,8 @@ button { font: inherit; }
   cursor: pointer; border: 1px solid transparent;
   background: var(--bg-elev);
   margin-bottom: 0.3rem;
+  box-shadow: var(--shadow);
+  transition: border-color 0.12s, background 0.12s;
 }
 .note-item:hover { border-color: var(--border); }
 .note-item.active { border-color: var(--accent); background: var(--accent-soft); }
@@ -328,6 +338,17 @@ button { font: inherit; }
 .saved-state.clickable { cursor: pointer; }
 .saved-state.clickable:hover { background: color-mix(in srgb, var(--danger) 22%, transparent); }
 .editor-actions { display: flex; align-items: center; gap: 0.25rem; }
+
+/* Overflow menu: inline on desktop (menu is display:contents, labels hidden),
+   a dropdown behind "⋯" on mobile. */
+.more-wrap { display: contents; }
+.more-toggle { display: none; }
+.more-menu { display: contents; }
+.more-menu .ml { display: none; }
+#delete-note:hover { color: var(--danger); }
+
+/* Floating "new note" button and drawer scrim: mobile only. */
+.fab, .scrim { display: none; }
 
 .editor-body {
   flex: 1; min-height: 0;
@@ -469,14 +490,94 @@ button { font: inherit; }
     transition: transform 0.22s ease;
     will-change: transform;
   }
-  /* list is the base layer; library slides in from the left, editor from the right */
+  /* list is the base layer; library slides in from the left as a drawer over
+     a scrim, editor from the right */
   .pane-list { z-index: 10; transform: translateX(0); }
-  .pane-library { z-index: 20; transform: translateX(-102%); box-shadow: 2px 0 12px rgba(0,0,0,0.12); }
+  .pane-library {
+    z-index: 20; right: auto; width: min(84vw, 320px);
+    transform: translateX(-102%); box-shadow: 2px 0 18px rgba(0,0,0,0.18);
+  }
   .pane-editor { z-index: 20; transform: translateX(102%); box-shadow: -2px 0 12px rgba(0,0,0,0.12); }
   .app[data-pane="library"] .pane-library { transform: translateX(0); }
   .app[data-pane="editor"] .pane-editor { transform: translateX(0); }
 
+  .scrim {
+    display: block; position: absolute; inset: 0; z-index: 15;
+    background: rgba(0,0,0,0.35);
+    opacity: 0; pointer-events: none; transition: opacity 0.22s ease;
+  }
+  .app[data-pane="library"] .scrim { opacity: 1; pointer-events: auto; }
+
   .back-btn { display: inline-flex; }
+  .menu-btn { font-size: 1.2rem; padding: 0.45rem 0.6rem; }
+  .list-title { font-size: 1.12rem; font-weight: 700; letter-spacing: -0.01em; }
+  .app-title { font-size: 1.15rem; }
+
+  /* Floating new-note button replaces the small header "+" */
+  #new-note { display: none; }
+  .fab {
+    display: flex; align-items: center; justify-content: center;
+    position: absolute; z-index: 5;
+    right: calc(1.1rem + env(safe-area-inset-right));
+    bottom: calc(1.25rem + env(safe-area-inset-bottom));
+    width: 56px; height: 56px; border-radius: 50%;
+    border: none; cursor: pointer;
+    background: var(--accent); color: #fff; font-size: 1.6rem; line-height: 1;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.22), 0 1px 3px rgba(0,0,0,0.12);
+    transition: transform 0.12s ease;
+  }
+  .fab:active { transform: scale(0.93); }
+  .list-body { padding-bottom: calc(5.5rem + env(safe-area-inset-bottom)) !important; }
+
+  /* Editor actions: keep TXT/MD + preview inline, the rest behind "⋯" */
+  .more-wrap { display: inline-flex; position: relative; }
+  .more-toggle { display: inline-flex; font-size: 1.25rem; }
+  .editor.menu-open .more-toggle { background: var(--accent-soft); color: var(--text); }
+  .more-menu {
+    display: none; position: absolute; top: calc(100% + 6px); right: 0; z-index: 30;
+    min-width: 190px; padding: 0.35rem;
+    background: var(--bg-elev); border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    flex-direction: column;
+  }
+  .editor.menu-open .more-menu { display: flex; }
+  .more-menu .icon-btn {
+    display: flex; align-items: center; justify-content: flex-start; gap: 0.7rem; width: 100%;
+    padding: 0.7rem 0.8rem; border-radius: 8px;
+    color: var(--text); font-size: 0.95rem; text-align: left;
+  }
+  .more-menu .ml { display: inline; }
+  .more-menu .mi { width: 1.3em; text-align: center; }
+  .more-menu #delete-note { color: var(--danger); }
+  /* the readonly rules hide archive/delete by id; keep them hidden in the menu */
+  .editor.readonly .more-menu #archive-note,
+  .editor.readonly .more-menu #delete-note { display: none; }
+
+  /* Tap feedback (no hover on touch) */
+  .note-item:active, .pushed-item:active, .lib-item:active { background: var(--accent-soft); }
+  .note-item:hover, .pushed-item:hover { border-color: transparent; }
+
+  /* Two-line previews read better on a phone */
+  .note-item-title { font-size: 0.98rem; }
+  .note-item-preview {
+    font-size: 0.85rem; line-height: 1.4; margin-top: 3px;
+    white-space: normal; display: -webkit-box;
+    -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  }
+  .note-item-meta { font-size: 0.74rem; }
+
+  /* iOS Safari zooms into any input under 16px — keep them all at 16px */
+  .auth-card input, .search-row input, .tag-input,
+  .outbox-form input, .outbox-form textarea, .api-key-row input { font-size: 16px; }
+  .auth-card { padding: 2.25rem 1.5rem; border-radius: 16px; }
+  .auth-card input, .auth-card button { padding: 0.8rem 0.9rem; }
+
+  .theme-btn, .api-key-row button, .danger-btn { padding: 0.7rem; }
+  .outbox-form button { padding: 0.75rem; }
+  .claude-actions button { padding: 0.45rem 0.8rem; font-size: 0.85rem; }
+  .tag-chip { font-size: 0.82rem; padding: 0.25rem 0.35rem 0.25rem 0.65rem; }
+  .tag-chip .chip-x { padding: 0.1rem 0.35rem; font-size: 1em; }
+  .editor-footer { padding-left: 1.1rem; padding-right: 1.1rem; }
 
   /* Safe areas (viewport-fit=cover) */
   .pane-header { padding-top: calc(0.6rem + env(safe-area-inset-top)); }
@@ -490,7 +591,9 @@ button { font: inherit; }
   .note-item { padding: 0.7rem 0.75rem; }
   .pushed-item { padding: 0.7rem 0.75rem; }
   .pushed-del { opacity: 1; padding: 0.3rem 0.5rem; }
-  .icon-btn { padding: 0.55rem 0.65rem; font-size: 1.05rem; }
+  .icon-btn { padding: 0.55rem 0.65rem; font-size: 1.05rem; min-width: 40px; min-height: 40px; justify-content: center; align-items: center; }
+  .editor-actions .icon-btn { display: inline-flex; }
+  .format-toggle { padding: 0.4rem 0.55rem; }
   .search-row input { padding: 0.6rem 0.7rem; font-size: 1rem; }
   .editor-body { padding: 0 1.1rem; }
   #note-title { font-size: 1.25rem; }
