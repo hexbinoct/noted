@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
+  <meta name="theme-color" content="#1f2430" />
+  <title>noted</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body data-theme="light">
+
+  <!-- Auth screen -->
+  <div id="auth-screen" class="auth-screen hidden">
+    <form id="auth-form" class="auth-card">
+      <h1>noted</h1>
+      <p class="auth-subtitle">a quiet place for your thoughts</p>
+      <input name="username" placeholder="username" autocomplete="username" required />
+      <input name="password" type="password" placeholder="password (min 8 chars)" autocomplete="current-password" required />
+      <button type="submit" id="auth-submit">Log in</button>
+      <p class="auth-toggle">
+        <span id="auth-toggle-text">No account?</span>
+        <a href="#" id="auth-toggle-link">Register</a>
+      </p>
+      <p class="auth-error" id="auth-error"></p>
+    </form>
+  </div>
+
+  <!-- Main app: library | note list | editor -->
+  <div id="app" class="app hidden" data-pane="list">
+
+    <aside class="pane pane-library">
+      <header class="pane-header">
+        <span class="app-title">noted</span>
+      </header>
+      <nav class="pane-scroll library-nav" id="library-nav"></nav>
+      <footer class="pane-footer">
+        <button class="lib-item" id="settings-btn"><span class="lib-icon">⚙</span><span class="lib-label">Settings</span></button>
+      </footer>
+    </aside>
+
+    <section class="pane pane-list">
+      <header class="pane-header">
+        <button class="icon-btn back-btn" id="back-to-library" aria-label="Back to library">‹</button>
+        <h2 class="list-title" id="list-title">All notes</h2>
+        <button class="icon-btn" id="new-note" title="New note" aria-label="New note">＋</button>
+      </header>
+      <div class="search-row" id="search-row">
+        <input id="search" type="search" placeholder="Search, or #tag…" />
+      </div>
+      <div id="list-body" class="pane-scroll list-body"></div>
+    </section>
+
+    <main class="pane pane-editor editor empty" id="editor">
+      <header class="pane-header editor-header">
+        <button class="icon-btn back-btn" id="back-to-list" aria-label="Back to list">‹</button>
+        <span class="saved-state" id="saved-state"></span>
+        <span class="editor-actions">
+          <button class="format-toggle" id="format-toggle" title="Toggle format" aria-label="Toggle format">TXT</button>
+          <button class="icon-btn" id="preview-toggle" title="Toggle preview" aria-label="Toggle preview">👁</button>
+          <button class="icon-btn" id="convert-pushed" title="Convert to editable note" aria-label="Convert to note">📋</button>
+          <button class="icon-btn" id="archive-note" title="Archive" aria-label="Archive note">🗄</button>
+          <button class="icon-btn" id="download-note" title="Download" aria-label="Download note">⬇</button>
+          <button class="icon-btn" id="delete-note" title="Delete" aria-label="Delete note">🗑</button>
+        </span>
+      </header>
+      <div id="readonly-banner" class="readonly-banner">Read-only — from Claude. Click 📋 to convert into an editable note.</div>
+      <div class="editor-body">
+        <input id="note-title" placeholder="Untitled" />
+        <div id="tag-row" class="tag-row"></div>
+        <textarea id="note-content" placeholder="Start writing…"></textarea>
+        <div id="note-preview" class="note-preview"></div>
+      </div>
+      <footer class="pane-footer editor-footer" id="editor-footer"></footer>
+      <div id="editor-empty" class="editor-empty">
+        <div class="editor-empty-inner">
+          <div class="editor-empty-icon">✎</div>
+          <p>No note open</p>
+          <button id="empty-new-note">New note</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/vendor/marked.umd.js"></script>
+  <script src="/vendor/purify.min.js"></script>
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>
